@@ -1,0 +1,454 @@
+---
+output:
+  md_document
+---
+# Homework 1 - Pedro N B Rodrigues
+
+```{r include=FALSE}
+library(rmarkdown)
+library(tidyverse)
+library(mosaic)
+rm(list = ls())
+```
+
+## Question 1 - What airline is better to travel?
+``` {r include=FALSE}
+ABIA <- read.csv("~/Desktop/Data-Mining/ECO395M-Mining/data/ABIA.csv")
+from_AUS = ABIA  %>%
+  filter(Origin=='AUS') %>%
+  arrange(desc(DepDelay))
+
+to_AUS = ABIA %>%
+  filter(Dest=='AUS') %>%
+  arrange(desc(ArrDelay))
+```
+
+```{r include=FALSE}
+## Total delay per airline leaving Austin:
+from_AUS %>%
+  group_by(UniqueCarrier) %>%
+  summarize(total_delay=sum(DepDelay, na.rm=TRUE)) %>%
+  arrange(desc(total_delay))
+
+## Average delay per airline leaving Austin:
+from_AUS %>%
+  group_by(UniqueCarrier) %>%
+  summarize(total_delay=(mean(DepDelay, na.rm=TRUE))) %>%
+  arrange(desc(total_delay))
+
+## Average delay per airline per weekday leaving Austin:
+from_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  summarize(total_delay=(mean(DepDelay, na.rm=TRUE))) %>%
+  arrange(desc(total_delay))
+
+## Create variable for both
+from_AUS = from_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  mutate(
+    total_delay=sum(DepDelay, na.rm=TRUE),
+    average_delay=total_delay/n(),
+  )
+
+try = from_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  summarize(average=mean(average_delay))
+head(try)
+
+average_week_departure = from_AUS %>%
+  group_by(DayOfWeek) %>%
+  summarize(average=mean(average_delay))
+head(average_week_departure)
+```
+
+```{r}
+ggplot(average_week_departure) + 
+  geom_col(aes(x=DayOfWeek, y=average)) +
+  labs(x='Day of the Week (1= Monday, 7= Sunday)',
+       y= 'Average Departure Delay in Minutes',
+       title= 'Departure delays during the week in AUS')
+```
+<br>
+<br>
+If you are planning a trip starting on the Austin International Airport, you should choose to depart on a Wednesday to minimize departure delays.
+<br>
+<br>
+```{r}
+ggplot(try) + 
+  geom_col(aes(x=DayOfWeek, y=average)) + 
+  facet_wrap(~UniqueCarrier) +
+  labs(x='Day of the Week (1= Monday, 7= Sunday)',
+       y= 'Average Departure Delay in Minutes',
+       title= 'Departure delays per airline from AUS')
+```
+<br>
+<br>
+However, when you are choosing between different airlines and dates, choosing US Airways and departure on a Monday gives the smallest departure delay.  
+<br>
+<br>
+```{r include=FALSE}
+## Total delay per airline arriving Austin
+to_AUS %>%
+  group_by(UniqueCarrier) %>%
+  summarize(total_delay=sum(ArrDelay, na.rm=TRUE)) %>%
+  arrange(desc(total_delay))
+
+## Average delay per airline arriving Austin
+to_AUS %>%
+  group_by(UniqueCarrier) %>%
+  summarize(total_delay=(mean(ArrDelay, na.rm=TRUE))) %>%
+  arrange(desc(total_delay))
+
+## Average delay per airline per weekday arriving Austin
+to_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  summarize(total_delay=(mean(ArrDelay, na.rm=TRUE))) %>%
+  arrange(desc(total_delay))
+
+
+to_AUS = to_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  mutate(
+    total_delay=sum(ArrDelay, na.rm=TRUE),
+    average_delay=total_delay/n(),
+  )
+
+try2 = to_AUS %>%
+  group_by(UniqueCarrier, DayOfWeek) %>%
+  summarize(average=mean(average_delay))
+head(try)
+
+average_weak_arrival = to_AUS %>%
+  group_by(DayOfWeek) %>%
+  summarize(average=mean(average_delay))
+head(average_weak_arrival)
+```
+
+```{r}
+ggplot(average_weak_arrival) + 
+  geom_col(aes(x=DayOfWeek, y=average)) +
+  labs(x='Day of the Week (1= Monday, 7= Sunday)',
+       y= 'Average Arrival Delay in Minutes',
+       title= 'Arrival delays during the week in AUS')
+```
+<br>
+<br>
+When planing the way back to the Austin International Airport, the best weekday to arrive is Saturday.  
+<br>
+<br>
+```{r}
+ggplot(try2) + 
+  geom_col(aes(x=DayOfWeek, y=average)) + 
+  facet_wrap(~UniqueCarrier) +
+  labs(x='Day of the Week (1= Monday, 7= Sunday)',
+       y= 'Average Arrival Delay in Minutes',
+       title= 'Arrival delays per airline to AUS')
+```
+<br>
+<br>
+Furthermore, the best arline for a trip returning to Austin is US Airways on a Saturday. If I were to recommend a trip, from Austin and returning to Austin, I would recommend leaving on a Monday and returning on a Saturday, both ways through US Airways to minimize delays.  
+<br>
+<br>
+``` {r include=FALSE}
+rm(list = ls())
+```
+
+## Question 2 - Billboard data
+
+``` {r include=FALSE}
+billboard <- read.csv("~/Desktop/Data-Mining/ECO395M-Mining/data/billboard.csv")
+```
+
+### A - Top 10 most popular songs since 1958
+``` {r}
+billboard %>%
+  group_by(performer, song) %>%
+  summarize(total_count = n()) %>%
+  arrange(desc(total_count)) %>%
+  head(10)
+```
+<br>
+Top 10 songs that spent the most time in the top 100 billboard songs.  
+
+<br>  
+
+### B - How many unique songs in top 100 per year?
+
+``` {r include=FALSE}
+billboard_2 = billboard %>%
+  filter(year!=1958 & year!=2021)
+
+billboard_2 = billboard_2 %>%
+  group_by(year, song_id) %>%
+  summarise(total = n())
+
+maybe = billboard_2 %>%
+  group_by(year) %>%
+  summarise(unique = n())
+```
+
+``` {r}
+ggplot(maybe) +
+  geom_line(aes(x=year, y=unique)) +
+  labs(x="Year",
+       y="Number of Unique Songs",
+       title="Number of Unique Songs in the Top 100 per Year")
+
+ggplot(maybe) +
+  geom_line(aes(x=year, y=unique)) +
+  ylim(0,1000) +
+  labs(x="Year",
+       y="Number of Unique Songs",
+       title="Number of Unique Songs in the Top 100 per Year")
+```
+<br>
+The picture shows the change in unique songs that ever made to the top 100 billboard songs of a given year. The number of unique songs in the top 100 decreased over time from 1970 to early 2000s, while it grew compared to previous years in both tails. That could be that during the period of 1970 to 2000, less songs were written that had the quality to reach the top 100, so old songs would stay in the top for longer.  
+
+<br>  
+
+### C - Artists with most ten-week hits.
+
+``` {r include=FALSE}
+ten_week_hit = billboard %>%
+  filter(weeks_on_chart==10)
+
+ten_week_hit = ten_week_hit %>%
+  group_by(performer) %>%
+  filter(n() >= 30)
+```
+
+``` {r}
+ten_week_hit %>%
+  summarise(count(performer))
+```
+
+``` {r}
+ggplot(ten_week_hit) + 
+  geom_col(aes(x=performer, y=count(song_id))) +
+  coord_flip() +
+  labs(x="Performer",
+       y="Number of Songs",
+       title="Number of Songs for at Least 10 Weeks on Top 100 per Performer")
+```
+<br>
+Those are the 19 artists that had at least 10 songs present in the top 100 for at least 10 weeks, making them some of the most successful performers. You can see that Elton John is the performer who had the most songs featuring for at least 10 weeks.  
+
+<br>  
+
+## Question 3
+
+``` {r include=FALSE}
+rm(list = ls())
+olympics_top20 <- read.csv("~/Desktop/Data-Mining/ECO395M-Mining/data/olympics_top20.csv")
+```
+
+## A - 95th percentile for female competitors in Athletic events
+
+``` {r include=FALSE}
+percentheight = olympics_top20 %>%
+  filter(sport=='Athletics' & sex=='F')
+
+percentheight = percentheight %>%
+  group_by(name) %>%
+  summarise(trueheight = mean(height))
+```
+
+```{r}
+percentheight %>%
+ summarise(q95_height = quantile(trueheight, 0.95))
+```
+
+## B - Which event has the greatest variability in height? 
+
+``` {r include=FALSE}
+femheight = olympics_top20 %>%
+  filter(sex=='F')
+```
+
+```{r}
+femheight %>%
+  group_by(event) %>%
+  summarise(newheight = mean(height),
+            sd_height = sd(height)) %>%
+  arrange(desc(sd_height))
+```
+<br>
+The event with the highest variation in height is the Women's Coxed Fours event from the Rowing sport.  
+
+<br>  
+
+## C - Change in average age of Olympic Swimmers across all olympic history.
+
+``` {r include=FALSE}
+swim_age = olympics_top20 %>%
+  filter(sport=='Swimming')
+```
+
+```{r}
+swim_age %>%
+  filter(sex=='F') %>%
+  group_by(year) %>%
+  summarise(year_fage = mean(age)) %>%
+  arrange(desc(year_fage))
+
+swim_age %>%
+  filter(sex=='M') %>%
+  group_by(year) %>%
+  summarise(year_mage = mean(age)) %>%
+  arrange(desc(year_mage))
+
+swim_age = swim_age %>%
+  group_by(year, sex) %>%
+  summarise(year_alage = mean(age))
+```
+
+```{r}
+ggplot(swim_age) +
+  geom_line(aes(x= year, y=year_alage, color=sex)) +
+  labs(x="Year",
+       y="Average Age",
+       title="Average Age of Swimmers across Olympic history")
+
+ggplot(swim_age) +
+  geom_line(aes(x= year, y=year_alage, color=sex)) +
+  ylim(15, 35) +
+  labs(x="Year",
+       y="Average Age",
+       title="Average Age of Swimmers across Olympic history")
+```
+<br>
+The age of male swimmers grew until the 1924 Olympics, from them it decreased until the 1932 Olympics. Since them there is a upwards trend with some decreases. The female average age decrease until the 1952 Olympics and then it began a upwards trend. By comparing both trends, I believe that there is very little difference in them, both have been increasing in the past years.
+<br>
+``` {r include=FALSE}
+rm(list = ls())
+```
+
+## Question 4
+
+``` {r include=FALSE}
+library(rsample)
+library(caret)
+library(modelr)
+library(parallel)
+library(foreach)
+
+sclass <- read.csv("~/Desktop/Data-Mining/ECO395M-Mining/data/sclass.csv")
+```
+
+``` {r include=FALSE}
+## Separate two groups
+class350car = sclass %>%
+  filter(trim==350)
+
+class63AMGcar = sclass %>%
+  filter(trim=='63 AMG')
+```  
+
+## 350 Trim Class  
+
+``` {r include=FALSE}
+## 350 car
+K_folds = 5
+
+k_grid = c(2, 4, 6, 8, 10, 15, 20, 25, 30, 35, 40, 45,
+           50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 250, 300)
+
+class350_folds = crossv_kfold(class350car, k=K_folds)
+
+cv_grid = foreach(k = k_grid, .combine='rbind') %dopar% {
+  models = map(class350_folds$train, ~ knnreg(price ~ mileage, k=k, data = ., use.all=FALSE))
+  errs = map2_dbl(models, class350_folds$test, modelr::rmse)
+  c(k=k, err = mean(errs), std_err = sd(errs)/sqrt(K_folds))
+} %>% as.data.frame
+```
+
+```{r}
+cv_grid %>%
+  arrange(err)
+
+ggplot(cv_grid) + 
+  geom_point(aes(x=k, y=err)) + 
+  geom_errorbar(aes(x=k, ymin = err-std_err, ymax = err+std_err)) + 
+  scale_x_log10() +
+  labs(x="Values of K",
+       y="Average RMSE with Standard errors",
+       title="RMSE across different values of K for 350 trim class")
+```
+
+```{r include=FALSE}
+## plot for the lowest, change k
+
+class350_split =  initial_split(class350car, prop=0.8)
+class350_train = training(class350_split)
+class350_test  = testing(class350_split)
+
+knn15 = knnreg(price ~ mileage, data=class350_train, k=15)
+rmse(knn15, class350_test)
+
+class350_test = class350_test %>%
+  mutate(price_pred15 = predict(knn15, class350_test))
+
+p_test = ggplot(data = class350_test) + 
+  geom_point(mapping = aes(x = mileage, y = price))
+```
+
+```{r}
+p_test + geom_line(aes(x = mileage, y = price_pred15), color='red', size=1.5) +
+  labs(x="Mileage",
+       y="Price",
+       title="Relation with Optimal K fitted line for 350 class")
+```  
+
+## 63 AMG Trim Class  
+
+``` {r include=FALSE}
+## 63 AMG
+
+class63AMG_folds = crossv_kfold(class63AMGcar, k=K_folds)
+
+cv_grid = foreach(k = k_grid, .combine='rbind') %dopar% {
+  models = map(class63AMG_folds$train, ~ knnreg(price ~ mileage, k=k, data = ., use.all=FALSE))
+  errs = map2_dbl(models, class63AMG_folds$test, modelr::rmse)
+  c(k=k, err = mean(errs), std_err = sd(errs)/sqrt(K_folds))
+} %>% as.data.frame
+```
+
+```{r}
+cv_grid %>%
+  arrange(err)
+
+ggplot(cv_grid) + 
+  geom_point(aes(x=k, y=err)) + 
+  geom_errorbar(aes(x=k, ymin = err-std_err, ymax = err+std_err)) + 
+  scale_x_log10() +
+  labs(x="Values of K",
+       y="Average RMSE with Standard errors",
+       title="RMSE across different values of K for 63 AMG trim class")
+```
+
+``` {r include=FALSE}
+## plot for the lowest, change k
+
+class63AMG_split =  initial_split(class63AMGcar, prop=0.8)
+class63AMG_train = training(class63AMG_split)
+class63AMG_test  = testing(class63AMG_split)
+
+knn60 = knnreg(price ~ mileage, data=class63AMG_train, k=60)
+rmse(knn60, class63AMG_test)
+
+class63AMG_test = class63AMG_test %>%
+  mutate(price_pred60 = predict(knn60, class63AMG_test))
+
+p_test = ggplot(data = class63AMG_test) + 
+  geom_point(mapping = aes(x = mileage, y = price))
+```
+
+```{r}
+p_test + geom_line(aes(x = mileage, y = price_pred60), color='red', size=1.5)+
+  labs(x="Mileage",
+       y="Price",
+       title="Relation with Optimal K fitted line for 63 AMG class")
+```
+<br>
+The 65 AMG trim yields the largest optimal "k", it could be due to the fact that there are approximately three and a half times more observations for 63 AMG trim cars than 350 trim cars, so it requires more neighbors to achieve a more precise prediction, compared to the other class. From the previous shown results, we can also see that the optimal "k" for the 63 AMG trim class is also approximately three and a half times the optimal "k" of the 350 trim class.
+<br>
