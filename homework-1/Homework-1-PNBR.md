@@ -2,48 +2,20 @@
 
 ## Question 1 - What airline is better to travel?
 
-    ggplot(average_week_departure) + 
-      geom_col(aes(x=DayOfWeek, y=average)) +
-      labs(x='Day of the Week (1= Monday, 7= Sunday)',
-           y= 'Average Departure Delay in Minutes',
-           title= 'Departure delays during the week in AUS')
-
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-4-1.png)
 <br> <br> If you are planning a trip starting on the Austin
 International Airport, you should choose to depart on a Wednesday to
 minimize departure delays. <br> <br>
-
-    ggplot(try) + 
-      geom_col(aes(x=DayOfWeek, y=average)) + 
-      facet_wrap(~UniqueCarrier) +
-      labs(x='Day of the Week (1= Monday, 7= Sunday)',
-           y= 'Average Departure Delay in Minutes',
-           title= 'Departure delays per airline from AUS')
-
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-5-1.png)
 <br> <br> However, when you are choosing between different airlines and
 dates, choosing US Airways and departure on a Monday gives the smallest
 departure delay.  
 <br> <br>
 
-    ggplot(average_weak_arrival) + 
-      geom_col(aes(x=DayOfWeek, y=average)) +
-      labs(x='Day of the Week (1= Monday, 7= Sunday)',
-           y= 'Average Arrival Delay in Minutes',
-           title= 'Arrival delays during the week in AUS')
-
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 <br> <br> When planing the way back to the Austin International Airport,
 the best weekday to arrive is Saturday.  
 <br> <br>
-
-    ggplot(try2) + 
-      geom_col(aes(x=DayOfWeek, y=average)) + 
-      facet_wrap(~UniqueCarrier) +
-      labs(x='Day of the Week (1= Monday, 7= Sunday)',
-           y= 'Average Arrival Delay in Minutes',
-           title= 'Arrival delays per airline to AUS')
-
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 <br> <br> Furthermore, the best arline for a trip returning to Austin is
 US Airways on a Saturday. If I were to recommend a trip, from Austin and
@@ -54,12 +26,6 @@ on a Saturday, both ways through US Airways to minimize delays.
 ## Question 2 - Billboard data
 
 ### A - Top 10 most popular songs since 1958
-
-    billboard %>%
-      group_by(performer, song) %>%
-      summarize(total_count = n()) %>%
-      arrange(desc(total_count)) %>%
-      head(10)
 
     ## `summarise()` has grouped output by 'performer'. You can override using the `.groups` argument.
 
@@ -85,22 +51,7 @@ songs.
 
 ### B - How many unique songs in top 100 per year?
 
-    ggplot(maybe) +
-      geom_line(aes(x=year, y=unique)) +
-      labs(x="Year",
-           y="Number of Unique Songs",
-           title="Number of Unique Songs in the Top 100 per Year")
-
-![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-13-1.png)
-
-    ggplot(maybe) +
-      geom_line(aes(x=year, y=unique)) +
-      ylim(0,1000) +
-      labs(x="Year",
-           y="Number of Unique Songs",
-           title="Number of Unique Songs in the Top 100 per Year")
-
-![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-13-2.png)
+![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-13-1.png)![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-13-2.png)
 <br> The picture shows the change in unique songs that ever made to the
 top 100 billboard songs of a given year. The number of unique songs in
 the top 100 decreased over time from 1970 to early 2000s, while it grew
@@ -111,9 +62,6 @@ reach the top 100, so old songs would stay in the top for longer.
 <br>
 
 ### C - Artists with most ten-week hits.
-
-    ten_week_hit %>%
-      summarise(count(performer))
 
     ## # A tibble: 19 x 2
     ##    performer             `count(performer)`
@@ -138,13 +86,6 @@ reach the top 100, so old songs would stay in the top for longer.
     ## 18 The Rolling Stones                    33
     ## 19 Tim McGraw                            39
 
-    ggplot(ten_week_hit) + 
-      geom_col(aes(x=performer, y=count(song_id))) +
-      coord_flip() +
-      labs(x="Performer",
-           y="Number of Songs",
-           title="Number of Songs for at Least 10 Weeks on Top 100 per Performer")
-
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-16-1.png)
 <br> Those are the 19 artists that had at least 10 songs present in the
 top 100 for at least 10 weeks, making them some of the most successful
@@ -157,21 +98,15 @@ most songs featuring for at least 10 weeks.
 
 ## A - 95th percentile for female competitors in Athletic events
 
-    percentheight %>%
-     summarise(q95_height = quantile(trueheight, 0.95))
-
     ## # A tibble: 1 x 1
     ##   q95_height
     ##        <dbl>
     ## 1        183
 
-## B - Which event has the greatest variability in height?
+<br> The 95th percentile of height in female competitors in Athletic
+events is 183cm. <br>
 
-    femheight %>%
-      group_by(event) %>%
-      summarise(newheight = mean(height),
-                sd_height = sd(height)) %>%
-      arrange(desc(sd_height))
+## B - Which event has the greatest variability in height?
 
     ## # A tibble: 132 x 3
     ##    event                                 newheight sd_height
@@ -195,12 +130,6 @@ Fours event from the Rowing sport.
 
 ## C - Change in average age of Olympic Swimmers across all olympic history.
 
-    swim_age %>%
-      filter(sex=='F') %>%
-      group_by(year) %>%
-      summarise(year_fage = mean(age)) %>%
-      arrange(desc(year_fage))
-
     ## # A tibble: 18 x 2
     ##     year year_fage
     ##    <int>     <dbl>
@@ -223,12 +152,6 @@ Fours event from the Rowing sport.
     ## 17  1952      17  
     ## 18  1972      17
 
-    swim_age %>%
-      filter(sex=='M') %>%
-      group_by(year) %>%
-      summarise(year_mage = mean(age)) %>%
-      arrange(desc(year_mage))
-
     ## # A tibble: 28 x 2
     ##     year year_mage
     ##    <int>     <dbl>
@@ -244,28 +167,9 @@ Fours event from the Rowing sport.
     ## 10  2004      22.8
     ## # … with 18 more rows
 
-    swim_age = swim_age %>%
-      group_by(year, sex) %>%
-      summarise(year_alage = mean(age))
-
     ## `summarise()` has grouped output by 'year'. You can override using the `.groups` argument.
 
-    ggplot(swim_age) +
-      geom_line(aes(x= year, y=year_alage, color=sex)) +
-      labs(x="Year",
-           y="Average Age",
-           title="Average Age of Swimmers across Olympic history")
-
-![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-24-1.png)
-
-    ggplot(swim_age) +
-      geom_line(aes(x= year, y=year_alage, color=sex)) +
-      ylim(15, 35) +
-      labs(x="Year",
-           y="Average Age",
-           title="Average Age of Swimmers across Olympic history")
-
-![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-24-2.png)
+![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-24-1.png)![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-24-2.png)
 <br> The age of male swimmers grew until the 1924 Olympics, from them it
 decreased until the 1932 Olympics. Since them there is a upwards trend
 with some decreases. The female average age decrease until the 1952
@@ -277,97 +181,65 @@ increasing in the past years. <br>
 
 ## 350 Trim Class
 
-    cv_grid %>%
-      arrange(err)
-
-    ##             k      err  std_err
-    ## result.6   15 10106.71 564.2191
-    ## result.11  40 10219.81 607.0897
-    ## result.7   20 10220.17 637.8449
-    ## result.5   10 10231.83 616.5302
-    ## result.10  35 10254.36 601.4135
-    ## result.4    8 10262.65 601.6863
-    ## result.12  45 10268.33 603.2758
-    ## result.13  50 10293.10 585.5776
-    ## result.8   25 10309.46 618.8010
-    ## result.9   30 10314.48 589.8379
-    ## result.3    6 10321.13 586.3437
-    ## result.14  60 10422.05 615.9807
-    ## result.15  70 10494.75 627.5686
-    ## result.16  80 10743.46 638.0219
-    ## result.2    4 10978.87 710.5487
-    ## result.17  90 10987.30 640.2323
-    ## result.18 100 11333.68 675.2059
-    ## result.1    2 11924.17 792.3925
-    ## result.19 125 12384.27 673.8401
-    ## result.20 150 13529.12 684.0776
-    ## result.21 175 14670.94 693.5872
-    ## result.22 200 15713.86 710.5736
-    ## result.23 250 17731.71 719.0308
-    ## result.24 300 20536.50 678.9010
-
-    ggplot(cv_grid) + 
-      geom_point(aes(x=k, y=err)) + 
-      geom_errorbar(aes(x=k, ymin = err-std_err, ymax = err+std_err)) + 
-      scale_x_log10() +
-      labs(x="Values of K",
-           y="Average RMSE with Standard errors",
-           title="RMSE across different values of K for 350 trim class")
+    ##             k       err  std_err
+    ## result.4    8  9996.616 772.4039
+    ## result.5   10 10044.418 762.5748
+    ## result.6   15 10059.911 641.1989
+    ## result.7   20 10127.164 589.8894
+    ## result.3    6 10172.105 676.2115
+    ## result.8   25 10199.365 548.4074
+    ## result.12  45 10211.572 563.6546
+    ## result.13  50 10227.402 554.2019
+    ## result.10  35 10235.027 547.8350
+    ## result.9   30 10240.773 534.3833
+    ## result.11  40 10253.727 576.6554
+    ## result.14  60 10388.165 510.1677
+    ## result.15  70 10464.974 483.1962
+    ## result.2    4 10543.179 698.9901
+    ## result.16  80 10719.307 444.9334
+    ## result.17  90 11007.765 415.2421
+    ## result.18 100 11355.966 433.5912
+    ## result.19 125 12445.899 460.7901
+    ## result.1    2 12467.998 549.7316
+    ## result.20 150 13596.986 511.0857
+    ## result.21 175 14718.103 577.2078
+    ## result.22 200 15764.149 627.3774
+    ## result.23 250 17743.243 650.7534
+    ## result.24 300 20549.303 674.1491
 
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-29-1.png)
-
-    p_test + geom_line(aes(x = mileage, y = price_pred15), color='red', size=1.5) +
-      labs(x="Mileage",
-           y="Price",
-           title="Relation with Optimal K fitted line for 350 class")
 
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-31-1.png)
 
 ## 63 AMG Trim Class
 
-    cv_grid %>%
-      arrange(err)
-
-    ##             k      err  std_err
-    ## result.14  60 14424.54 470.3511
-    ## result.15  70 14424.82 488.1210
-    ## result.13  50 14432.92 466.5323
-    ## result.12  45 14438.13 461.0675
-    ## result.11  40 14473.19 463.5565
-    ## result.10  35 14491.30 473.5020
-    ## result.9   30 14497.63 486.8482
-    ## result.8   25 14504.99 475.2477
-    ## result.16  80 14519.78 507.8035
-    ## result.17  90 14561.51 525.9274
-    ## result.7   20 14611.66 469.0925
-    ## result.18 100 14667.73 557.9964
-    ## result.6   15 14724.57 500.6968
-    ## result.5   10 14811.22 509.0334
-    ## result.4    8 14857.03 553.9067
-    ## result.19 125 14949.38 605.5055
-    ## result.3    6 15091.22 542.9086
-    ## result.20 150 15389.90 650.0432
-    ## result.2    4 15733.73 544.1308
-    ## result.21 175 15890.66 667.8109
-    ## result.22 200 16387.15 656.8992
-    ## result.1    2 17075.76 519.4758
-    ## result.23 250 17434.76 639.2816
-    ## result.24 300 18526.60 624.5527
-
-    ggplot(cv_grid) + 
-      geom_point(aes(x=k, y=err)) + 
-      geom_errorbar(aes(x=k, ymin = err-std_err, ymax = err+std_err)) + 
-      scale_x_log10() +
-      labs(x="Values of K",
-           y="Average RMSE with Standard errors",
-           title="RMSE across different values of K for 63 AMG trim class")
+    ##             k      err   std_err
+    ## result.13  50 14421.36  481.5516
+    ## result.12  45 14453.85  471.3655
+    ## result.14  60 14466.25  495.9309
+    ## result.15  70 14469.22  488.3377
+    ## result.10  35 14483.65  478.7580
+    ## result.11  40 14497.37  451.1036
+    ## result.16  80 14545.81  527.9220
+    ## result.9   30 14560.95  495.7041
+    ## result.8   25 14590.49  518.6058
+    ## result.17  90 14631.58  546.8661
+    ## result.7   20 14671.17  521.7883
+    ## result.18 100 14725.03  565.9257
+    ## result.6   15 14767.37  496.0621
+    ## result.19 125 15040.72  640.1895
+    ## result.5   10 15104.48  490.9189
+    ## result.4    8 15133.15  550.1249
+    ## result.3    6 15325.80  484.9081
+    ## result.20 150 15465.04  739.3964
+    ## result.2    4 15921.29  437.7681
+    ## result.21 175 15946.23  828.1545
+    ## result.22 200 16418.12  900.5980
+    ## result.1    2 16978.14  572.7841
+    ## result.23 250 17430.68 1019.6617
+    ## result.24 300 18475.76 1159.9871
 
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-33-1.png)
-
-    p_test + geom_line(aes(x = mileage, y = price_pred60), color='red', size=1.5)+
-      labs(x="Mileage",
-           y="Price",
-           title="Relation with Optimal K fitted line for 63 AMG class")
 
 ![](Homework-1-PNBR_files/figure-markdown_strict/unnamed-chunk-35-1.png)
 <br> The 65 AMG trim yields the largest optimal “k”, it could be due to

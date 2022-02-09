@@ -61,7 +61,7 @@ average_week_departure = from_AUS %>%
 head(average_week_departure)
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(average_week_departure) + 
   geom_col(aes(x=DayOfWeek, y=average)) +
   labs(x='Day of the Week (1= Monday, 7= Sunday)',
@@ -73,7 +73,7 @@ ggplot(average_week_departure) +
 If you are planning a trip starting on the Austin International Airport, you should choose to depart on a Wednesday to minimize departure delays.
 <br>
 <br>
-```{r}
+```{r echo=FALSE}
 ggplot(try) + 
   geom_col(aes(x=DayOfWeek, y=average)) + 
   facet_wrap(~UniqueCarrier) +
@@ -124,7 +124,7 @@ average_weak_arrival = to_AUS %>%
 head(average_weak_arrival)
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(average_weak_arrival) + 
   geom_col(aes(x=DayOfWeek, y=average)) +
   labs(x='Day of the Week (1= Monday, 7= Sunday)',
@@ -136,7 +136,7 @@ ggplot(average_weak_arrival) +
 When planing the way back to the Austin International Airport, the best weekday to arrive is Saturday.  
 <br>
 <br>
-```{r}
+```{r echo=FALSE}
 ggplot(try2) + 
   geom_col(aes(x=DayOfWeek, y=average)) + 
   facet_wrap(~UniqueCarrier) +
@@ -160,7 +160,7 @@ billboard <- read.csv("~/Desktop/Data-Mining/ECO395M-Mining/data/billboard.csv")
 ```
 
 ### A - Top 10 most popular songs since 1958
-``` {r}
+``` {r echo=FALSE}
 billboard %>%
   group_by(performer, song) %>%
   summarize(total_count = n()) %>%
@@ -187,7 +187,7 @@ maybe = billboard_2 %>%
   summarise(unique = n())
 ```
 
-``` {r}
+``` {r echo=FALSE}
 ggplot(maybe) +
   geom_line(aes(x=year, y=unique)) +
   labs(x="Year",
@@ -217,12 +217,12 @@ ten_week_hit = ten_week_hit %>%
   filter(n() >= 30)
 ```
 
-``` {r}
+``` {r echo=FALSE}
 ten_week_hit %>%
   summarise(count(performer))
 ```
 
-``` {r}
+``` {r echo=FALSE}
 ggplot(ten_week_hit) + 
   geom_col(aes(x=performer, y=count(song_id))) +
   coord_flip() +
@@ -253,10 +253,13 @@ percentheight = percentheight %>%
   summarise(trueheight = mean(height))
 ```
 
-```{r}
+```{r echo=FALSE}
 percentheight %>%
  summarise(q95_height = quantile(trueheight, 0.95))
 ```
+<br>
+The 95th percentile of height in female competitors in Athletic events is 183cm.
+<br>  
 
 ## B - Which event has the greatest variability in height? 
 
@@ -265,7 +268,7 @@ femheight = olympics_top20 %>%
   filter(sex=='F')
 ```
 
-```{r}
+```{r echo=FALSE}
 femheight %>%
   group_by(event) %>%
   summarise(newheight = mean(height),
@@ -284,7 +287,7 @@ swim_age = olympics_top20 %>%
   filter(sport=='Swimming')
 ```
 
-```{r}
+```{r echo=FALSE}
 swim_age %>%
   filter(sex=='F') %>%
   group_by(year) %>%
@@ -302,7 +305,7 @@ swim_age = swim_age %>%
   summarise(year_alage = mean(age))
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(swim_age) +
   geom_line(aes(x= year, y=year_alage, color=sex)) +
   labs(x="Year",
@@ -362,7 +365,7 @@ cv_grid = foreach(k = k_grid, .combine='rbind') %dopar% {
 } %>% as.data.frame
 ```
 
-```{r}
+```{r echo=FALSE}
 cv_grid %>%
   arrange(err)
 
@@ -392,7 +395,7 @@ p_test = ggplot(data = class350_test) +
   geom_point(mapping = aes(x = mileage, y = price))
 ```
 
-```{r}
+```{r echo=FALSE}
 p_test + geom_line(aes(x = mileage, y = price_pred15), color='red', size=1.5) +
   labs(x="Mileage",
        y="Price",
@@ -413,7 +416,7 @@ cv_grid = foreach(k = k_grid, .combine='rbind') %dopar% {
 } %>% as.data.frame
 ```
 
-```{r}
+```{r echo=FALSE}
 cv_grid %>%
   arrange(err)
 
@@ -443,7 +446,7 @@ p_test = ggplot(data = class63AMG_test) +
   geom_point(mapping = aes(x = mileage, y = price))
 ```
 
-```{r}
+```{r echo=FALSE}
 p_test + geom_line(aes(x = mileage, y = price_pred60), color='red', size=1.5)+
   labs(x="Mileage",
        y="Price",
